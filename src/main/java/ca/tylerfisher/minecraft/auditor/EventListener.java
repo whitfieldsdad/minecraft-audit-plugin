@@ -4,7 +4,11 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -18,6 +22,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.Inventory;
@@ -46,22 +51,32 @@ public class EventListener implements Listener {
   @EventHandler(priority = EventPriority.MONITOR)
   public void onChunkLoad(ChunkLoadEvent event) {
     Chunk chunk = event.getChunk();
-    this.logger.info("Chunk (%d, %d) loaded".formatted(chunk.getX(), chunk.getZ()));
+    this.logger.fine("Chunk (%d, %d) loaded".formatted(chunk.getX(), chunk.getZ()));
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void onChunkUnload(ChunkUnloadEvent event) {
     Chunk chunk = event.getChunk();
-    this.logger.info("Chunk (%d, %d) unloaded".formatted(chunk.getX(), chunk.getZ()));
+    this.logger.fine("Chunk (%d, %d) unloaded".formatted(chunk.getX(), chunk.getZ()));
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerJoin(PlayerJoinEvent event) {
     Player player = event.getPlayer();
+    provisionPlayerEnvironment(player);
+  }
 
-    // Give the player a bow and a full stack of arrows.
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void onPlayerRespawn(PlayerRespawnEvent event) {
+    Player player = event.getPlayer();
+    provisionPlayerEnvironment(player);
+  }
+
+  private void provisionPlayerEnvironment(Player player) {
     ensurePlayerHasObjects(player, Material.BOW, 1);
     ensurePlayerHasObjects(player, Material.ARROW, 64);
+
+    ensureEntityNearby(player, EntityType.SHEEP, 10);
   }
 
   private void ensurePlayerHasObjects(Player player, Material material, int amount) {
@@ -77,6 +92,55 @@ public class EventListener implements Listener {
       player.sendMessage("You have been given " + giftAmount + " " + material.name() + "s");
       inventory.addItem(new ItemStack(material, giftAmount));
     }
+  }
+
+  private void ensureEntityNearby(Player player, EntityType entityType, int radius) {
+    Location location = player.getLocation();
+    World world = location.getWorld();
+
+    this.logger.info("Ensuring that a %s is near %s".formatted(entityType.name(), player.getName()));
+    this.logger.info("%s is at (%d, %d, %d)".formatted(player.getName(), location.getBlockX(),
+        location.getBlockY(), location.getBlockZ()));
+
+    Location spawnLocation = getRandomSpawnLocationNearPlayer(player, radius);
+    if (spawnLocation == null) {
+      this.logger.info("Could not find a location to spawn a %s".formatted(entityType.name()));
+    } else {
+      world.spawnEntity(spawnLocation, entityType);
+      this.logger.info("Spawned a %s at (%d, %d, %d)".formatted(entityType.name(), spawnLocation.getBlockX(),
+          spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
+    }
+  }
+
+  private Location getRandomSpawnLocationNearPlayer(Player player, int radius) {
+    Location playerLocation = player.getLocation();
+    int playerX = playerLocation.getBlockX();
+    int playerY = playerLocation.getBlockY();
+    int playerZ = playerLocation.getBlockZ();
+
+    int minX = playerX - radius;
+    int maxX = playerX + radius;
+
+    int minZ = playerZ - radius;
+    int maxZ = playerZ + radius;
+
+    int minY = playerY - radius;
+    int maxY = playerY + radius;
+
+    World world = player.getWorld();
+
+    for (int x = minX; x <= maxX; x++) {
+      for (int z = minZ; z <= maxZ; z++) {
+        for (int y = minY; y <= maxY; y++) {
+          Block block = world.getBlockAt(x, y, z);
+          Block below = world.getBlockAt(x, y - 1, z);
+          if (block.isEmpty() && !below.isEmpty()) {
+            return block.getLocation();
+          }
+        }
+      }
+    }
+    return null;
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -95,7 +159,7 @@ public class EventListener implements Listener {
     ProjectileSource source = projectile.getShooter();
     if (source instanceof Player) {
       Player player = (Player) source;
-      player.sendMessage("You shot a " + projectile.getType().name());
+      player.sendMessage("You shot a %s".formatted(projectile.getType().name()));
     }
   }
 
@@ -106,7 +170,7 @@ public class EventListener implements Listener {
 
     if (source instanceof Player) {
       Player player = (Player) source;
-      player.sendMessage("Your " + projectile.getType().name() + " hit something");
+      player.sendMessage("Your %s hit something".formatted(projectile.getType().name()));
     }
   }
 
