@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.bukkit.World;
 
-public class WorldMetadata implements WorldObjectInterface {
+public class WorldMetadata {
   public UUID id;
   public String name;
   public boolean allowAnimals;
@@ -19,10 +19,5 @@ public class WorldMetadata implements WorldObjectInterface {
     this.allowMonsters = world.getAllowMonsters();
     this.animalSpawnLimit = world.getAnimalSpawnLimit();
     this.ambientSpawnLimit = world.getAmbientSpawnLimit();
-  }
-
-  @Override
-  public String getObjectId() {
-    return String.format("world--%s", this.id.toString());
   }
 }

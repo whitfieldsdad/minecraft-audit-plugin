@@ -1,0 +1,16 @@
+digraph G {
+  rankdir=LR;
+  node [shape=box];
+  edge [color=gray; dir=none];
+
+  event -> location;
+  event -> block;
+  event -> world;
+  event -> entity;
+
+  location -> chunk;
+
+  block -> location;
+
+  entity -> location;
+}
