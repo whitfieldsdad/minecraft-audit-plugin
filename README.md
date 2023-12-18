@@ -1,27 +1,6 @@
 # Yet another audit plugin for Minecraft servers
 
-## Features
-
-- All data is stored in JSON or Parquet files.
-- All doubles are floored to integers (i.e. speeds and (x, y, z) coordinates are rounded down).
-- Everything has a UUID and timestamp associated with it (i.e. worlds, entities, blocks, etc.).
-- All events are representable as quads (i.e. world, subject, predicate, object).
-
-| Object type | Example path                                                              |
-|-------------|---------------------------------------------------------------------------|
-| World       | `worlds/<world_uuid>.json`                                                |
-| Entity      | `worlds/<world_uuid>/entities/<entity_uuid>.json`                         |
-| Block       | `worlds/<world_uuid>/blocks/<block_uuid>.json`                            |
-| Events      | `worlds/<world_uuid>/events/<subject_uuid>/<predicate>/<event_uuid>.json` |
-
-| Subject | Predicate | Object | Example path                                                        |
-|---------|-----------|--------|---------------------------------------------------------------------|
-| Player  | placed    | Block  | `worlds/<world_uuid>/events/<entity_uuid>/placed/<block_uuid>.json` |
-| Player  | mined     | Block  | `worlds/<world_uuid>/events/<entity_uuid>/mined/<block_uuid>.json`  |
-
-> All dates and timestamps are in ISO 8601 format.
->
-> Parquet is recommended for use in production to reduce storage space, improve read/write performance, and improve query performance.
+> This plugin is a work in progress and is not ready for public use.
 
 ## Usage
 
