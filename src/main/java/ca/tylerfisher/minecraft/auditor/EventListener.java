@@ -1,5 +1,6 @@
 package ca.tylerfisher.minecraft.auditor;
 
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -76,7 +78,8 @@ public class EventListener implements Listener {
     ensurePlayerHasObjects(player, Material.BOW, 1);
     ensurePlayerHasObjects(player, Material.ARROW, 64);
 
-    ensureEntityNearby(player, EntityType.SHEEP, 10);
+    ensureEntityNearby(player, EntityType.SHEEP, 5);
+    ensureEntityNearby(player, EntityType.PIG, 5);
   }
 
   private void ensurePlayerHasObjects(Player player, Material material, int amount) {
@@ -99,17 +102,49 @@ public class EventListener implements Listener {
     World world = location.getWorld();
 
     this.logger.info("Ensuring that a %s is near %s".formatted(entityType.name(), player.getName()));
-    this.logger.info("%s is at (%d, %d, %d)".formatted(player.getName(), location.getBlockX(),
-        location.getBlockY(), location.getBlockZ()));
+
+    if (entityNearPlayer(player, entityType, radius)) {
+      this.logger.info("A %s is already nearby".formatted(entityType.name()));
+      return;
+    }
 
     Location spawnLocation = getRandomSpawnLocationNearPlayer(player, radius);
     if (spawnLocation == null) {
-      this.logger.info("Could not find a location to spawn a %s".formatted(entityType.name()));
+      this.logger.warning("Could not find a location to spawn a %s".formatted(entityType.name()));
     } else {
       world.spawnEntity(spawnLocation, entityType);
       this.logger.info("Spawned a %s at (%d, %d, %d)".formatted(entityType.name(), spawnLocation.getBlockX(),
           spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
     }
+  }
+
+  private boolean entityNearPlayer(Player player, EntityType entityType, int radius) {
+    Location location = player.getLocation();
+    return entityNearLocation(location, entityType, radius);
+  }
+
+  private boolean entityNearLocation(Location location, EntityType entityType, int radius) {
+    World world = location.getWorld();
+
+    int cx = location.getBlockX();
+    int cy = location.getBlockY();
+    int cz = location.getBlockZ();
+    int r = radius;
+
+    Collection<Entity> nearbyEntities = world.getNearbyEntities(location, r, r, r);
+    for (Entity entity : nearbyEntities) {
+      Location entityLocation = entity.getLocation();
+      int x = entityLocation.getBlockX();
+      int y = entityLocation.getBlockY();
+      int z = entityLocation.getBlockZ();
+
+      // Check if the entity is within the spherical radius of the provided location.
+      int d = (x - cx) ^ 2 + (y - cy) ^ 2 + (z - cz) ^ 2;
+      if (d <= (r ^ 2)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private Location getRandomSpawnLocationNearPlayer(Player player, int radius) {
