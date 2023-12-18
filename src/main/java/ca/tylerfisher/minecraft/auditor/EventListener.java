@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -75,11 +76,17 @@ public class EventListener implements Listener {
   }
 
   private void provisionPlayerEnvironment(Player player) {
+    restoreMaxHealth(player);
+
     ensurePlayerHasObjects(player, Material.BOW, 1);
     ensurePlayerHasObjects(player, Material.ARROW, 64);
 
     ensureEntityNearby(player, EntityType.SHEEP, 5);
     ensureEntityNearby(player, EntityType.PIG, 5);
+  }
+
+  private void restoreMaxHealth(Damageable entity) {
+    entity.setHealth(entity.getMaxHealth());
   }
 
   private void ensurePlayerHasObjects(Player player, Material material, int amount) {
