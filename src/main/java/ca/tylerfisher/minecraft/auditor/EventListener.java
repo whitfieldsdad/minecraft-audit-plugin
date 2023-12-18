@@ -77,6 +77,7 @@ public class EventListener implements Listener {
 
   private void provisionPlayerEnvironment(Player player) {
     restoreMaxHealth(player);
+    restoreHunger(player);
 
     ensurePlayerHasObjects(player, Material.BOW, 1);
     ensurePlayerHasObjects(player, Material.ARROW, 64);
@@ -87,6 +88,10 @@ public class EventListener implements Listener {
 
   private void restoreMaxHealth(Damageable entity) {
     entity.setHealth(entity.getMaxHealth());
+  }
+
+  private void restoreHunger(Player player) {
+    player.setFoodLevel(20);
   }
 
   private void ensurePlayerHasObjects(Player player, Material material, int amount) {
