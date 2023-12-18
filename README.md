@@ -1,5 +1,7 @@
 # Yet another audit plugin for Minecraft servers
 
+![A random gameplay screenshot](docs/images/minecraft-mountains.png)
+
 > This plugin is a work in progress and is not ready for public use.
 
 ## Usage
