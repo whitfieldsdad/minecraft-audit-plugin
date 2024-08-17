@@ -1,8 +1,8 @@
-package ca.tylerfisher.minecraft.auditor.objects;
+package ca.tylerfisher.minecraft.auditor.tracing;
 
 import org.bukkit.Location;
 
-public class LocationMetadata {
+public class LocationMetadata implements TraceObject {
   public int x;
   public int y;
   public int z;
@@ -11,5 +11,10 @@ public class LocationMetadata {
     this.x = location.getBlockX();
     this.y = location.getBlockY();
     this.z = location.getBlockZ();
+  }
+
+  @Override
+  public String getType() {
+    return "location";
   }
 }

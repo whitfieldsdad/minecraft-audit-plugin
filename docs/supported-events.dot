@@ -1,0 +1,9 @@
+digraph PackagesAndClasses {
+  rankdir=LR;
+  node [shape=box];
+
+    "org.bukkit.event.block";
+
+    "org.bukkit.event.block" -> "BlockBreakEvent";
+    "org.bukkit.event.block" -> "BlockPlaceEvent";
+}

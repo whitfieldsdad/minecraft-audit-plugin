@@ -1,8 +1,103 @@
 # Yet another audit plugin for Minecraft servers
 
-![A random gameplay screenshot](docs/images/minecraft-mountains.png)
-
 > This plugin is a work in progress and is not ready for public use.
+
+## Features
+
+- Detect when a player breaks or places a block
+
+## Examples
+
+### Events
+
+- `player.broke.block`: a player broke a block
+- `player.placed.block`: a player placed a block
+
+Example `player.broke.block` event:
+
+```json
+{
+    "id": "f2ee70a3-c0ca-43cb-ac3d-e0a5c34ecccb",
+    "time": "2024-08-17T06:25:11.416021567Z",
+    "subject": {
+        "data": {
+            "id": "0250f7e1-68c2-41f9-8b7b-154759b769e1",
+            "name": "whitfieldsdad"
+        },
+        "type": "player"
+    },
+    "verb": "broke",
+    "object": {
+        "data": {
+            "x": -2,
+            "y": 110,
+            "z": -81,
+            "materialType": "DIRT"
+        },
+        "type": "block"
+    },
+    "prepositionalObjects": {
+        "at": {
+            "data": {
+                "x": -1,
+                "y": 110,
+                "z": -82
+            },
+            "type": "location"
+        },
+        "in": {
+            "data": {
+                "id": "ba4aa330-f661-454a-9813-9fbc224f4ea6",
+                "name": "world"
+            },
+            "type": "world"
+        }
+    }
+}
+```
+
+Example `player.placed.block` event:
+
+```json
+{
+    "id": "7136f5aa-6013-4127-aaaa-447859465940",
+    "time": "2024-08-17T06:25:10.071691835Z",
+    "subject": {
+        "data": {
+            "id": "0250f7e1-68c2-41f9-8b7b-154759b769e1",
+            "name": "whitfieldsdad"
+        },
+        "type": "player"
+    },
+    "verb": "placed",
+    "object": {
+        "data": {
+            "x": -2,
+            "y": 110,
+            "z": -81,
+            "materialType": "DIRT"
+        },
+        "type": "block"
+    },
+    "prepositionalObjects": {
+        "at": {
+            "data": {
+                "x": -1,
+                "y": 110,
+                "z": -81
+            },
+            "type": "location"
+        },
+        "in": {
+            "data": {
+                "id": "ba4aa330-f661-454a-9813-9fbc224f4ea6",
+                "name": "world"
+            },
+            "type": "world"
+        }
+    }
+}
+```
 
 ## Usage
 
@@ -20,12 +115,6 @@ To stop the server, hit CTRL + C in the same terminal or run the following comma
 
 ```bash
 make down
-```
-
-To view information about the running container:
-
-```bash
-docker ps
 ```
 
 ```text

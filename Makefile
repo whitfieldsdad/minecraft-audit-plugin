@@ -9,7 +9,7 @@ install:
 up: container
 	docker-compose up --force-recreate
 
-container:
+container: install
 	docker-compose build --no-cache
 
 down:

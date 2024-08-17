@@ -1,8 +1,8 @@
-package ca.tylerfisher.minecraft.auditor.objects;
+package ca.tylerfisher.minecraft.auditor.tracing;
 
 import org.bukkit.block.Block;
 
-public class BlockMetadata {
+public class BlockMetadata implements TraceObject {
   public int x;
   public int y;
   public int z;
@@ -13,5 +13,10 @@ public class BlockMetadata {
     this.y = block.getY();
     this.z = block.getZ();
     this.materialType = block.getType().name();
+  }
+
+  @Override
+  public String getType() {
+    return "block";
   }
 }
