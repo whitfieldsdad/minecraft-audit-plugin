@@ -1,4 +1,4 @@
-package ca.tylerfisher.minecraft.auditor.serialization;
+package ca.tylerfisher.minecraft.auditor.io;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
